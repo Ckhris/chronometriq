@@ -39,11 +39,12 @@ public class ClinicController {
         return ResponseEntity.status(HttpStatus.OK).body(doctors);
     }
 
-    @GetMapping("/doctors/{id}/appointment/{start}/{end}")
+    @GetMapping("/doctors/{id}/availabilities/{start}/{end}")
     public ResponseEntity getDoctorAvailability(@PathVariable("id") Long id,
                                                 @PathVariable("start") LocalDate start,
                                                 @PathVariable("end") LocalDate end) {
-        return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctorAvailability(id, start, end));
+        List<AvailabilityDto> availabilities = doctorService.findDoctorAvailability(id, start, end);
+        return ResponseEntity.status(HttpStatus.OK).body(availabilities);
     }
 
     @PostMapping("/appointment")
@@ -51,7 +52,7 @@ public class ClinicController {
         String response;
         try {
             response = doctorService.bookAppointment(bookAppointment);
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());

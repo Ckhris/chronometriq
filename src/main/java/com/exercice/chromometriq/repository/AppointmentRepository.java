@@ -11,5 +11,6 @@ import java.util.Optional;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     List<Appointment> findAllByDoctorIdAndPatientIsNullAndDateBetween(Long doctorId, LocalDate start, LocalDate end);
+
     Optional<Appointment> findByIdAndDoctorIdAndPatientIsNull(Long appointmendId, Long doctorId);
 }

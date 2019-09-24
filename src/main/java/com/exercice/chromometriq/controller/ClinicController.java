@@ -25,11 +25,11 @@ public class ClinicController {
     private DoctorService doctorService;
 
     @GetMapping("/doctors")
-    public ResponseEntity getDoctors(){
+    public ResponseEntity getDoctors() {
         List<Doctor> doctors;
         try {
             doctors = doctorService.findDoctors();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("getDoctors() : An issue occured : {}", e.getMessage(), e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -42,21 +42,15 @@ public class ClinicController {
     @GetMapping("/doctors/{id}/appointment/{start}/{end}")
     public ResponseEntity getDoctorAvailability(@PathVariable("id") Long id,
                                                 @PathVariable("start") LocalDate start,
-                                                @PathVariable("end") LocalDate end){
+                                                @PathVariable("end") LocalDate end) {
 
         List<AvailabilityDto> doctorAvailability;
-        try {
-            doctorAvailability = doctorService.findDoctorAvailability(id, start, end);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("No doctor with id "+id+" found");
-        }
+        doctorAvailability = doctorService.findDoctorAvailability(id, start, end);
         return ResponseEntity.status(HttpStatus.OK).body(doctorAvailability);
     }
 
     @PostMapping("/appointment")
-    public ResponseEntity bookAppointment(@RequestBody BookAppointment bookAppointment){
+    public ResponseEntity bookAppointment(@RequestBody BookAppointment bookAppointment) {
         String response = doctorService.bookAppointment(bookAppointment);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

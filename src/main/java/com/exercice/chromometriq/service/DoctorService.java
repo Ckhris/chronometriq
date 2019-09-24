@@ -32,15 +32,15 @@ public class DoctorService {
     }
 
     public List<AvailabilityDto> findDoctorAvailability(Long doctorId, LocalDate start, LocalDate end) {
-            List<Appointment> availabilities = appointmentRepository.findAllByDoctorIdAndPatientIsNullAndDateBetween(doctorId, start, end);
-            return AvailabilityMapper.INSTANCE.availabilitiesToAvailabilitiesDto(availabilities);
+        List<Appointment> availabilities = appointmentRepository.findAllByDoctorIdAndPatientIsNullAndDateBetween(doctorId, start, end);
+        return AvailabilityMapper.INSTANCE.availabilitiesToAvailabilitiesDto(availabilities);
     }
 
     public String bookAppointment(BookAppointment bookAppointment) {
         Optional<Patient> patient = patientRepository.findById(bookAppointment.getPatient());
-        if(patient.isPresent()){
+        if (patient.isPresent()) {
             Optional<Appointment> appointment = appointmentRepository.findByIdAndDoctorIdAndPatientIsNull(bookAppointment.getAppointment(), bookAppointment.getDoctor());
-            if(appointment.isPresent()){
+            if (appointment.isPresent()) {
                 appointment.get().setPatient(patient.get());
                 appointmentRepository.save(appointment.get());
                 return "Appointment booked";

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class DoctorService {
         return AvailabilityMapper.INSTANCE.availabilitiesToAvailabilitiesDto(availabilities);
     }
 
-    public String bookAppointment(BookAppointment bookAppointment) {
+    public String bookAppointment(BookAppointment bookAppointment) throws EntityNotFoundException {
         Optional<Patient> patient = patientRepository.findById(bookAppointment.getPatient());
         if (patient.isPresent()) {
             Optional<Appointment> appointment = appointmentRepository.findByIdAndDoctorIdAndPatientIsNull(bookAppointment.getAppointment(), bookAppointment.getDoctor());
@@ -48,7 +49,7 @@ public class DoctorService {
             return "No appointment available";
         }
 
-        return "Patient not found";
+        throw new EntityNotFoundException("Patient not found");
     }
 
 }

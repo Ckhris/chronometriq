@@ -6,13 +6,15 @@ import com.exercice.chromometriq.repository.AppointmentRepository;
 import com.exercice.chromometriq.repository.PatientRepository;
 import com.exercice.chromometriq.request.BookAppointment;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +31,8 @@ public class DoctorServiceTest {
     @InjectMocks
     private DoctorService doctorService;
 
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Before
     public void setUp(){}
@@ -36,13 +40,10 @@ public class DoctorServiceTest {
     @Test
     public void bookAppointment_patientNotFound(){
         BookAppointment bookAppointment = BookAppointment.builder().patient(1L).build();
+        exceptionRule.expect(EntityNotFoundException.class);
+        exceptionRule.expectMessage("Patient not found");
 
-        when(patientRepository.findById(bookAppointment.getPatient())).thenReturn(Optional.empty());
-
-        String result = doctorService.bookAppointment(bookAppointment);
-
-        assertThat(result).isEqualTo("Patient not found");
-        verify(patientRepository).findById(bookAppointment.getPatient());
+        doctorService.bookAppointment(bookAppointment);
     }
 
     @Test

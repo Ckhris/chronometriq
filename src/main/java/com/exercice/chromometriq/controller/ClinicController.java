@@ -43,15 +43,19 @@ public class ClinicController {
     public ResponseEntity getDoctorAvailability(@PathVariable("id") Long id,
                                                 @PathVariable("start") LocalDate start,
                                                 @PathVariable("end") LocalDate end) {
-
-        List<AvailabilityDto> doctorAvailability;
-        doctorAvailability = doctorService.findDoctorAvailability(id, start, end);
-        return ResponseEntity.status(HttpStatus.OK).body(doctorAvailability);
+        return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctorAvailability(id, start, end));
     }
 
     @PostMapping("/appointment")
     public ResponseEntity bookAppointment(@RequestBody BookAppointment bookAppointment) {
-        String response = doctorService.bookAppointment(bookAppointment);
+        String response;
+        try {
+            response = doctorService.bookAppointment(bookAppointment);
+        } catch (EntityNotFoundException e){
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
